@@ -15,6 +15,10 @@ class MazeSolver {
   State state; // value of type state
 
   void followLine();
+
+  void isJunction();
+
+  void identifyJunction();
   
   public:
 

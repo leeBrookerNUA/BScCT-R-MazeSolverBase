@@ -31,16 +31,50 @@ void MazeSolver::followLine() {
   motors.setSpeeds(leftSpeed, rightSpeed);
 }
 
+void MazeSolver::isJunction() {
+  if(lineSensorValues[0] > 950 || lineSensorValues[4] > 950){
+    state = JUNCTION;
+  }
+}
+
+void MazeSolver::identifyJunction() {
+  lineSensors.readLineBlack(lineSensorValues);
+
+//keeps sensors from accidentally detecting the wrong direction if theres a slight misalignment
+  motors.setSpeeds(baseSpeed, baseSpeed);
+  delay(100);
+  motors.setSpeeds(0, 0);
+
+//finish state
+  if(lineSensorValues[0] > 950 && lineSensorValues[1] > 950 && lineSensorValues[2] > 950 && lineSensorValues[3] > 950 && lineSensorValues[4] > 950){
+    state = FINISHED;
+    return;
+  }
+
+//left turn state
+  if(lineSensorValues[0] > 950){
+    state = TURN_LEFT;
+    return;
+  }
+
+//keep following line state
+  else{
+    state = LINE_FOLLOWER;
+  }
+}
+
 void MazeSolver::loop() {
   if (state == LINE_FOLLOWER) {
+    display.clear();
     followLine();
+    isJunction();
   }
 
   if (state == JUNCTION) {
     // call junciton identifier function
-    motors.setSpeeds(0, 0);
     display.clear();
     display.print('J');
+    identifyJunction();
   }
   if (state == TURN_LEFT) {
     // call left turn function
