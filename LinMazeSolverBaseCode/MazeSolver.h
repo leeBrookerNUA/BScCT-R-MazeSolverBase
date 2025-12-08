@@ -16,9 +16,16 @@ class MazeSolver {
 
   void followLine();
 
-  void isJunction();
+  void checkIfPath();
 
-  void identifyJunction();
+  void pathChange();
+
+  void turnLeft();
+
+  void findDeadEnd();
+
+  void turnAround();
+
   
   public:
 

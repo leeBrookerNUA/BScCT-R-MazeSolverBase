@@ -31,19 +31,23 @@ void MazeSolver::followLine() {
   motors.setSpeeds(leftSpeed, rightSpeed);
 }
 
-void MazeSolver::isJunction() {
-  if(lineSensorValues[0] > 950 || lineSensorValues[4] > 950){
+void MazeSolver::checkIfPath() {
+  if(lineSensorValues[0] > 950 && lineSensorValues[1] > 400 || lineSensorValues[3] > 950 && lineSensorValues[4] > 400){
     state = JUNCTION;
   }
 }
 
-void MazeSolver::identifyJunction() {
-  lineSensors.readLineBlack(lineSensorValues);
+bool first = true;
 
+void MazeSolver::pathChange() {
+  if(!first) return;
+  first = false;
 //keeps sensors from accidentally detecting the wrong direction if theres a slight misalignment
   motors.setSpeeds(baseSpeed, baseSpeed);
-  delay(100);
+  delay(200);
   motors.setSpeeds(0, 0);
+
+  lineSensors.readLineBlack(lineSensorValues);
 
 //finish state
   if(lineSensorValues[0] > 950 && lineSensorValues[1] > 950 && lineSensorValues[2] > 950 && lineSensorValues[3] > 950 && lineSensorValues[4] > 950){
@@ -58,35 +62,67 @@ void MazeSolver::identifyJunction() {
   }
 
 //keep following line state
-  else{
-    state = LINE_FOLLOWER;
+   else{
+    //  state = LINE_FOLLOWER;
+    motors.setSpeeds(0, 0);
+   }
+}
+
+
+void MazeSolver::turnLeft() {
+
+motors.setSpeeds(minSpeed, maxSpeed);
+delay(650);
+state = LINE_FOLLOWER;
+
+}
+
+void MazeSolver::findDeadEnd() {
+  if(lineSensorValues[0] < 10 && lineSensorValues[1] < 10 && lineSensorValues[2] < 10 && lineSensorValues[3] < 10 && lineSensorValues[4] < 10){
+    motors.setSpeeds(0, 0);
+    state = U_TURN;
+    return;
   }
 }
+
+void MazeSolver::turnAround() {
+
+motors.setSpeeds(minSpeed, maxSpeed);
+delay(1300);
+state = LINE_FOLLOWER;
+
+}
+
 
 void MazeSolver::loop() {
   if (state == LINE_FOLLOWER) {
     display.clear();
+    display.print(F("LINE"));
     followLine();
-    isJunction();
+    checkIfPath();
+    findDeadEnd();
   }
 
   if (state == JUNCTION) {
     // call junciton identifier function
+    motors.setSpeeds(0, 0);
     display.clear();
     display.print('J');
-    identifyJunction();
+    pathChange();
   }
   if (state == TURN_LEFT) {
     // call left turn function
     motors.setSpeeds(0, 0);
     display.clear();
     display.print('L');
+    // turnLeft();
   }
   if (state == U_TURN) {
     // call u turn function
     motors.setSpeeds(0, 0);
     display.clear();
     display.print('U');
+    // turnAround();
   }
   if (state == FINISHED) {
     motors.setSpeeds(0, 0);
