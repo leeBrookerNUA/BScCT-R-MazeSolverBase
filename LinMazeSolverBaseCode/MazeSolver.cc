@@ -32,7 +32,7 @@ void MazeSolver::followLine() {
 }
 
 void MazeSolver::checkIfPath() {
-  if(lineSensorValues[0] > 400 && lineSensorValues[1] > 900 || lineSensorValues[3] > 900 && lineSensorValues[4] > 400){
+  if(lineSensorValues[0] > 300 && lineSensorValues[1] > 900|| lineSensorValues[3] > 900 && lineSensorValues[4] > 300){
     state = JUNCTION;
   }
 }
@@ -47,6 +47,7 @@ void MazeSolver::pathChange() {
 
   lineSensors.readLineBlack(lineSensorValues);
 
+
 //finish state
   if(lineSensorValues[0] > 900 && lineSensorValues[1] > 900 && lineSensorValues[2] > 900 && lineSensorValues[3] > 900 && lineSensorValues[4] > 900){
     state = FINISHED;
@@ -55,6 +56,10 @@ void MazeSolver::pathChange() {
 
 //left turn state
   if(lineSensorValues[0] > 800 || lineSensorValues[0] > 800 && lineSensorValues[1] > 800){
+    
+    motors.setSpeeds(baseSpeed, baseSpeed);
+    delay(100);
+    motors.setSpeeds(0, 0);
     state = TURN_LEFT;
     isLeft = true;
     return;
@@ -71,7 +76,6 @@ void MazeSolver::pathChange() {
 
   else{
     state = LINE_FOLLOWER;
-    isLeft = false;
     return;
   }
 
@@ -80,14 +84,18 @@ void MazeSolver::pathChange() {
 void MazeSolver::turnLeft() {
 
 motors.setSpeeds(minSpeed, maxSpeed);
-delay(400);
+delay(450);
 state = LINE_FOLLOWER;
+isLeft = false;
 
 }
 
 // void MazeSolver::findDeadEnd() {
-//   if(lineSensorValues[0] < 10 && lineSensorValues[1] < 10 && lineSensorValues[2] < 10 && lineSensorValues[3] < 10 && lineSensorValues[4] < 10 && isLeft == false){
-//     motors.setSpeeds(0, 0);
+
+//   lineSensors.readLineBlack(lineSensorValues);
+
+//   if(lineSensorValues[1] < 50 && lineSensorValues[2] < 50 && lineSensorValues[3] < 50 && isLeft == false){
+//     // motors.setSpeeds(0, 0);
 //     state = U_TURN;
 //     return;
 //   }
@@ -95,8 +103,8 @@ state = LINE_FOLLOWER;
 
 // void MazeSolver::turnAround() {
 
-// motors.setSpeeds(minSpeed, maxSpeed);
-// delay(600);
+// // motors.setSpeeds(minSpeed, maxSpeed);
+// // delay(600);
 // state = LINE_FOLLOWER;
 
 // }
@@ -130,12 +138,13 @@ void MazeSolver::loop() {
   //   motors.setSpeeds(0, 0);
   //   display.clear();
   //   display.print('U');
-  //   // turnAround();
+  //   turnAround();
   // }
   if (state == FINISHED) {
     motors.setSpeeds(0, 0);
     display.clear();
     display.print('F');
+    delay(300);
     return;
   }
 }
