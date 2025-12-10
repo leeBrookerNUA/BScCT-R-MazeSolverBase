@@ -32,66 +32,74 @@ void MazeSolver::followLine() {
 }
 
 void MazeSolver::checkIfPath() {
-  if(lineSensorValues[0] > 950 && lineSensorValues[1] > 400 || lineSensorValues[3] > 950 && lineSensorValues[4] > 400){
+  if(lineSensorValues[0] > 400 && lineSensorValues[1] > 900 || lineSensorValues[3] > 900 && lineSensorValues[4] > 400){
     state = JUNCTION;
   }
 }
 
-bool first = true;
 
+bool isLeft = false;
 void MazeSolver::pathChange() {
-  if(!first) return;
-  first = false;
 //keeps sensors from accidentally detecting the wrong direction if theres a slight misalignment
   motors.setSpeeds(baseSpeed, baseSpeed);
-  delay(200);
+  delay(100);
   motors.setSpeeds(0, 0);
 
   lineSensors.readLineBlack(lineSensorValues);
 
 //finish state
-  if(lineSensorValues[0] > 950 && lineSensorValues[1] > 950 && lineSensorValues[2] > 950 && lineSensorValues[3] > 950 && lineSensorValues[4] > 950){
+  if(lineSensorValues[0] > 900 && lineSensorValues[1] > 900 && lineSensorValues[2] > 900 && lineSensorValues[3] > 900 && lineSensorValues[4] > 900){
     state = FINISHED;
     return;
   }
 
 //left turn state
-  if(lineSensorValues[0] > 950){
+  if(lineSensorValues[0] > 800 || lineSensorValues[0] > 800 && lineSensorValues[1] > 800){
     state = TURN_LEFT;
+    isLeft = true;
     return;
   }
 
-//keep following line state
-   else{
-    //  state = LINE_FOLLOWER;
+//block turning right
+  if(lineSensorValues[3] > 800 && lineSensorValues[4] > 800 && lineSensorValues[2] > 10){
+    motors.setSpeeds(baseSpeed, baseSpeed);
+    delay(250);
     motors.setSpeeds(0, 0);
-   }
-}
+    state = LINE_FOLLOWER;
+    return;
+  }
 
+  else{
+    state = LINE_FOLLOWER;
+    isLeft = false;
+    return;
+  }
+
+}
 
 void MazeSolver::turnLeft() {
 
 motors.setSpeeds(minSpeed, maxSpeed);
-delay(650);
+delay(400);
 state = LINE_FOLLOWER;
 
 }
 
-void MazeSolver::findDeadEnd() {
-  if(lineSensorValues[0] < 10 && lineSensorValues[1] < 10 && lineSensorValues[2] < 10 && lineSensorValues[3] < 10 && lineSensorValues[4] < 10){
-    motors.setSpeeds(0, 0);
-    state = U_TURN;
-    return;
-  }
-}
+// void MazeSolver::findDeadEnd() {
+//   if(lineSensorValues[0] < 10 && lineSensorValues[1] < 10 && lineSensorValues[2] < 10 && lineSensorValues[3] < 10 && lineSensorValues[4] < 10 && isLeft == false){
+//     motors.setSpeeds(0, 0);
+//     state = U_TURN;
+//     return;
+//   }
+// }
 
-void MazeSolver::turnAround() {
+// void MazeSolver::turnAround() {
 
-motors.setSpeeds(minSpeed, maxSpeed);
-delay(1300);
-state = LINE_FOLLOWER;
+// motors.setSpeeds(minSpeed, maxSpeed);
+// delay(600);
+// state = LINE_FOLLOWER;
 
-}
+// }
 
 
 void MazeSolver::loop() {
@@ -100,7 +108,7 @@ void MazeSolver::loop() {
     display.print(F("LINE"));
     followLine();
     checkIfPath();
-    findDeadEnd();
+    // findDeadEnd();
   }
 
   if (state == JUNCTION) {
@@ -115,15 +123,15 @@ void MazeSolver::loop() {
     motors.setSpeeds(0, 0);
     display.clear();
     display.print('L');
-    // turnLeft();
+    turnLeft();
   }
-  if (state == U_TURN) {
-    // call u turn function
-    motors.setSpeeds(0, 0);
-    display.clear();
-    display.print('U');
-    // turnAround();
-  }
+  // if (state == U_TURN) {
+  //   // call u turn function
+  //   motors.setSpeeds(0, 0);
+  //   display.clear();
+  //   display.print('U');
+  //   // turnAround();
+  // }
   if (state == FINISHED) {
     motors.setSpeeds(0, 0);
     display.clear();

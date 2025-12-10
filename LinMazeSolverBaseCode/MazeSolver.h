@@ -22,9 +22,9 @@ class MazeSolver {
 
   void turnLeft();
 
-  void findDeadEnd();
+  // void findDeadEnd();
 
-  void turnAround();
+  // void turnAround();
 
   
   public:
