@@ -50,12 +50,17 @@ void MazeSolver::checkIfJunction() {
 
 void MazeSolver::checkIfDeadEnd() {
   lineSensors.readLineBlack(lineSensorValues);
-  if (lineSensorValues[2] < 500) state = U_TURN;
+  if (lineSensorValues[2] < 500) {
+   state = U_TURN;
+  path[count] = BACK;
+  count++;
+  Screen();
+  }
 }
 
 void MazeSolver::identifyJunction() {
 
-  display.clear();
+  // display.clear();
 
   delay(500);
 
@@ -79,6 +84,9 @@ void MazeSolver::identifyJunction() {
   // if there's a left take it
   if (lineSensorValues[0] > 750) {
     state = TURN_LEFT;
+    path[count] = LEFT;
+    count++;
+    Screen();
     return;
   }
 
@@ -87,12 +95,18 @@ void MazeSolver::identifyJunction() {
     delay(100);
 
     state = LINE_FOLLOWER;
+    path[count] = FORWARD;
+    count++;
+    Screen();
     return;
   }
 
   // if there's a left take it
   if (lineSensorValues[4] > 750) {
     state = TURN_RIGHT;
+    path[count] = RIGHT;
+    count++;
+    Screen();
     return;
   }
 
@@ -136,31 +150,44 @@ void MazeSolver::uTurn() {
   state = LINE_FOLLOWER;
 }
 
+void MazeSolver::Screen() {
+  display.gotoXY(0, 0);
+  for(int i = 0; i <= 63; i++){
+  display.print(path[i]);
+  }
+
+}
+
 void MazeSolver::loop() {
   // display.clear();
   display.gotoXY(0, 0);
-  display.print(state);
+  // display.print(state);
 
   if (state == LINE_FOLLOWER) {
     followLine();
     //check if junction there's a junction and change state otherwise
     checkIfJunction();
     checkIfDeadEnd();
+    
   }
 
   if (state == JUNCTION) {
     identifyJunction();
+    
   }
 
   if (state == TURN_LEFT) {
     turnLeft();
+   
   }
 
   if (state == TURN_RIGHT) {
     turnRight();
+   
   }
   if (state == U_TURN) {
     uTurn();
+   
   }
   if (state == FINISHED) {
     motors.setSpeeds(0, 0);
@@ -169,7 +196,7 @@ void MazeSolver::loop() {
 
   if (state == FAKE_END) {
     display.clear();
-
+    display.print("END");
     while (!buttonB.getSingleDebouncedPress()) {
       uint16_t position = lineSensors.readLineBlack(lineSensorValues);
 
