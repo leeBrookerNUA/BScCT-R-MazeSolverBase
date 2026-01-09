@@ -183,6 +183,8 @@ void MazeSolver::turnLeft() {
   motors.setSpeeds(-baseSpeed, baseSpeed);
   delay(730);
   motors.setSpeeds(0, 0);
+  motors.setSpeeds(baseSpeed, baseSpeed);
+  delay(100);
   state = LINE_FOLLOWER;
 }
 
