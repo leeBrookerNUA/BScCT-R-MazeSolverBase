@@ -45,6 +45,8 @@ class MazeSolver {
 
   void Screen();
 
+  void addDecision(Decision d);
+
   char pathName(Decision name);
 
   

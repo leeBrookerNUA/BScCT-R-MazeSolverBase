@@ -48,15 +48,70 @@ void MazeSolver::checkIfJunction() {
   }
 }
 
+void MazeSolver::addDecision(Decision d) {
+
+  path[count] = d;
+
+  if(path[count - 1] == BACK){
+
+    if(path[count - 2] == LEFT && path[count] == LEFT)
+    {
+      path[count] = EMPTY;
+      path[count - 1] = EMPTY;
+      path[count - 2] = FORWARD;
+      count--;
+      return;
+    }
+
+  if(path[count - 2] == LEFT && path[count] == FORWARD)
+    {
+      path[count] = EMPTY;
+      path[count - 1] = EMPTY;
+      path[count - 2] = RIGHT;
+      count--;
+      return;
+    }
+
+  if(path[count - 2] == FORWARD && path[count] == LEFT)
+    {
+      path[count] = EMPTY;
+      path[count - 1] = EMPTY;
+      path[count - 2] = RIGHT;
+      count--;
+      return;
+    }
+
+  if(path[count - 2] == FORWARD && path[count] == FORWARD)
+    {
+      path[count] = EMPTY;
+      path[count - 1] = EMPTY;
+      path[count - 2] = BACK;
+      count--;
+      return;
+    }
+
+  if(path[count - 2] == RIGHT && path[count] == LEFT)
+    {
+      path[count] = EMPTY;
+      path[count - 1] = EMPTY;
+      path[count - 2] = BACK;
+      count--;
+      return;
+    }
+
+  }
+    count++;
+}
+
 void MazeSolver::checkIfDeadEnd() {
   lineSensors.readLineBlack(lineSensorValues);
   if (lineSensorValues[2] < 500) {
    state = U_TURN;
-  path[count] = BACK;
-  count++;
-  Screen();
+    addDecision(BACK);
+    Screen();
   }
 }
+
 
 void MazeSolver::identifyJunction() {
 
@@ -84,19 +139,19 @@ void MazeSolver::identifyJunction() {
   // if there's a left take it
   if (lineSensorValues[0] > 750) {
     state = TURN_LEFT;
-    path[count] = LEFT;
-    count++;
+
+    if (lineSensorValues[2] > 750 || lineSensorValues[4] > 750){
+    addDecision(LEFT);
     Screen();
+    }
     return;
   }
 
   if (lineSensorValues[2] > 750) {
     motors.setSpeeds(baseSpeed, baseSpeed);
     delay(100);
-
     state = LINE_FOLLOWER;
-    path[count] = FORWARD;
-    count++;
+    addDecision(FORWARD);
     Screen();
     return;
   }
@@ -104,9 +159,9 @@ void MazeSolver::identifyJunction() {
   // if there's a left take it
   if (lineSensorValues[4] > 750) {
     state = TURN_RIGHT;
-    path[count] = RIGHT;
-    count++;
-    Screen();
+    // path[count] = RIGHT;
+    // count++;
+    // Screen();
     return;
   }
 
@@ -185,6 +240,8 @@ char MazeSolver::pathName(Decision name) {
   }
 
 }
+
+
 
 void MazeSolver::loop() {
   // display.clear();
