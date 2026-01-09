@@ -152,8 +152,36 @@ void MazeSolver::uTurn() {
 
 void MazeSolver::Screen() {
   display.gotoXY(0, 0);
-  for(int i = 0; i <= 63; i++){
-  display.print(path[i]);
+  for(int i = 0; i <= 7; i++){
+  display.print(pathName(path[i]));
+  }
+
+  display.gotoXY(0, 1);
+  for(int i = 8; i <= 16; i++){
+  display.print(pathName(path[i]));
+  }
+}
+
+char MazeSolver::pathName(Decision name) {
+
+  if(name == LEFT){
+    return 'L';
+  }
+
+  if(name == RIGHT){
+    return 'R';
+  }
+
+  if(name == FORWARD){
+    return 'F';
+  }
+
+  if(name == BACK){
+    return 'B';
+  }
+
+  if(name == EMPTY){
+    return ' ';
   }
 
 }

@@ -13,6 +13,7 @@ enum State {
 };
 
 enum Decision {
+  EMPTY,
   LEFT,
   RIGHT,
   FORWARD,
@@ -43,6 +44,8 @@ class MazeSolver {
   void uTurn();
 
   void Screen();
+
+  char pathName(Decision name);
 
   
   public:
