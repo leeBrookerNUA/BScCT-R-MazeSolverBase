@@ -31,120 +31,161 @@ void MazeSolver::followLine() {
   motors.setSpeeds(leftSpeed, rightSpeed);
 }
 
-void MazeSolver::checkIfPath() {
-  if(lineSensorValues[0] > 300 && lineSensorValues[1] > 900|| lineSensorValues[3] > 900 && lineSensorValues[4] > 300){
+void MazeSolver::checkIfJunction() {
+  lineSensors.readLineBlack(lineSensorValues);
+
+  bool junction = false;
+
+  if (lineSensorValues[0] > 950) junction = true;  // detect a line to the left
+  if (lineSensorValues[1] > 950) junction = true;  // detect a line to the left
+  if (lineSensorValues[3] > 950) junction = true;  // detect a line to the right
+  if (lineSensorValues[4] > 950) junction = true;  // detect a line to the right
+  // any other case contains one of these types
+
+  if (junction) {
     state = JUNCTION;
+    motors.setSpeeds(0, 0);
   }
 }
 
+void MazeSolver::checkIfDeadEnd() {
+  lineSensors.readLineBlack(lineSensorValues);
+  if (lineSensorValues[2] < 500) state = U_TURN;
+}
 
-bool isLeft = false;
-void MazeSolver::pathChange() {
-//keeps sensors from accidentally detecting the wrong direction if theres a slight misalignment
+void MazeSolver::identifyJunction() {
+
+  display.clear();
+
+  delay(500);
+
+
+
+  // move forward to identify other junctions
   motors.setSpeeds(baseSpeed, baseSpeed);
-  delay(100);
+  delay(250);
   motors.setSpeeds(0, 0);
-
   lineSensors.readLineBlack(lineSensorValues);
 
 
-//finish state
-  if(lineSensorValues[0] > 900 && lineSensorValues[1] > 900 && lineSensorValues[2] > 900 && lineSensorValues[3] > 900 && lineSensorValues[4] > 900){
+
+  // if can sense everywhere -> FINISHED
+  if (lineSensorValues[0] > 950 && lineSensorValues[1] > 950 && lineSensorValues[2] > 950 && lineSensorValues[3] > 950 && lineSensorValues[4] > 950) {
     state = FINISHED;
     return;
   }
 
-//left turn state
-  if(lineSensorValues[0] > 800 || lineSensorValues[0] > 800 && lineSensorValues[1] > 800){
-    
+
+  // if there's a left take it
+  if (lineSensorValues[0] > 750) {
+    state = TURN_LEFT;
+    return;
+  }
+
+  if (lineSensorValues[2] > 750) {
     motors.setSpeeds(baseSpeed, baseSpeed);
     delay(100);
-    motors.setSpeeds(0, 0);
-    state = TURN_LEFT;
-    isLeft = true;
-    return;
-  }
 
-//block turning right
-  if(lineSensorValues[3] > 800 && lineSensorValues[4] > 800 && lineSensorValues[2] > 10){
-    motors.setSpeeds(baseSpeed, baseSpeed);
-    delay(250);
-    motors.setSpeeds(0, 0);
     state = LINE_FOLLOWER;
     return;
   }
 
-  else{
-    state = LINE_FOLLOWER;
+  // if there's a left take it
+  if (lineSensorValues[4] > 750) {
+    state = TURN_RIGHT;
     return;
   }
 
+
+  // any other case -> keep going
+  state = LINE_FOLLOWER;
 }
+
+
+
+bool first = true;
 
 void MazeSolver::turnLeft() {
 
-motors.setSpeeds(minSpeed, maxSpeed);
-delay(450);
-state = LINE_FOLLOWER;
-isLeft = false;
+  motors.setSpeeds(baseSpeed, baseSpeed);
+  delay(250);
+  motors.setSpeeds(0, 0);
 
+  motors.setSpeeds(-baseSpeed, baseSpeed);
+  delay(730);
+  motors.setSpeeds(0, 0);
+  state = LINE_FOLLOWER;
 }
 
-// void MazeSolver::findDeadEnd() {
+void MazeSolver::turnRight() {
 
-//   lineSensors.readLineBlack(lineSensorValues);
+  motors.setSpeeds(baseSpeed, baseSpeed);
+  delay(250);
+  motors.setSpeeds(0, 0);
 
-//   if(lineSensorValues[1] < 50 && lineSensorValues[2] < 50 && lineSensorValues[3] < 50 && isLeft == false){
-//     // motors.setSpeeds(0, 0);
-//     state = U_TURN;
-//     return;
-//   }
-// }
+  motors.setSpeeds(baseSpeed, -baseSpeed);
+  delay(730);
+  motors.setSpeeds(0, 0);
+  state = LINE_FOLLOWER;
+}
 
-// void MazeSolver::turnAround() {
-
-// // motors.setSpeeds(minSpeed, maxSpeed);
-// // delay(600);
-// state = LINE_FOLLOWER;
-
-// }
-
+void MazeSolver::uTurn() {
+  motors.setSpeeds(-baseSpeed, baseSpeed);
+  delay(1500);
+  motors.setSpeeds(0, 0);
+  state = LINE_FOLLOWER;
+}
 
 void MazeSolver::loop() {
+  // display.clear();
+  display.gotoXY(0, 0);
+  display.print(state);
+
   if (state == LINE_FOLLOWER) {
-    display.clear();
-    display.print(F("LINE"));
     followLine();
-    checkIfPath();
-    // findDeadEnd();
+    //check if junction there's a junction and change state otherwise
+    checkIfJunction();
+    checkIfDeadEnd();
   }
 
   if (state == JUNCTION) {
-    // call junciton identifier function
-    motors.setSpeeds(0, 0);
-    display.clear();
-    display.print('J');
-    pathChange();
+    identifyJunction();
   }
+
   if (state == TURN_LEFT) {
-    // call left turn function
-    motors.setSpeeds(0, 0);
-    display.clear();
-    display.print('L');
     turnLeft();
   }
-  // if (state == U_TURN) {
-  //   // call u turn function
-  //   motors.setSpeeds(0, 0);
-  //   display.clear();
-  //   display.print('U');
-  //   turnAround();
-  // }
+
+  if (state == TURN_RIGHT) {
+    turnRight();
+  }
+  if (state == U_TURN) {
+    uTurn();
+  }
   if (state == FINISHED) {
     motors.setSpeeds(0, 0);
-    display.clear();
-    display.print('F');
-    delay(300);
     return;
+  }
+
+  if (state == FAKE_END) {
+    display.clear();
+
+    while (!buttonB.getSingleDebouncedPress()) {
+      uint16_t position = lineSensors.readLineBlack(lineSensorValues);
+
+      display.gotoXY(0, 0);
+      display.print(position);
+      display.print("    ");
+      display.gotoXY(0, 1);
+      for (uint8_t i = 0; i < NUM_SENSORS; i++) {
+        uint8_t barHeight = map(lineSensorValues[i], 0, 1000, 0, 8);
+
+        if (barHeight > 8) { barHeight = 8; }
+        const char barChars[] = { ' ', 0, 1, 2, 3, 4, 5, 6, (char)255 };
+        display.print(barChars[barHeight]);
+      }
+
+      delay(50);
+    }
   }
 }
