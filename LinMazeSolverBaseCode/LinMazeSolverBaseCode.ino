@@ -191,20 +191,24 @@ void loop()
   if(!mazeSolver.isFinished()){
    mazeSolver.loop();
 
-//copy path from Maze Solver to Solution Follower
+    //copy path from Maze Solver to Solution Follower
     if(mazeSolver.isFinished()){
       for(int i = 0; i <50; i++){
 
         Decision d = mazeSolver.path[i];
 
         solutionFollower.path[i] = d;
-
+        }
+       
+      display.gotoXY(0,1);
+      display.print(F("Finished"));
+      while(!buttonB.getSingleDebouncedPress());
       }
-        solutionFollower.totalLength = mazeSolver.count;
+
+      return;
+      solutionFollower.totalLength = mazeSolver.count;
     }
 
-   return;
-  }
-
+  solutionFollower.loop();
 
 }
