@@ -23,6 +23,10 @@ class SolutionFollower {
 
   public:
 
+  Decision path[64];
+
+  int totalLength;
+
   void loop();
 
 

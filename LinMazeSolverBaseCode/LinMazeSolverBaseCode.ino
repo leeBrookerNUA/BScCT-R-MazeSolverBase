@@ -10,6 +10,7 @@ courses or with different motors. */
 #include <PololuMenu.h>
 #include "Shared.h"
 #include "MazeSolver.h"
+#include "SolutionFollower.h"
 
 using namespace Pololu3piPlus32U4;
 
@@ -67,6 +68,7 @@ uint16_t proportional; // coefficient of the P term * 256
 uint16_t derivative; // coefficient of the D term * 256
 
 MazeSolver mazeSolver;
+SolutionFollower solutionFollower;
 
 void selectStandard()
 {
@@ -188,6 +190,19 @@ void loop()
 
   if(!mazeSolver.isFinished()){
    mazeSolver.loop();
+
+//copy path from Maze Solver to Solution Follower
+    if(mazeSolver.isFinished()){
+      for(int i = 0; i <50; i++){
+
+        Decision d = mazeSolver.path[i];
+
+        solutionFollower.path[i] = d;
+
+      }
+        solutionFollower.totalLength = mazeSolver.count;
+    }
+
    return;
   }
 
