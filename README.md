@@ -32,6 +32,16 @@
 - When the pololu has reached the finish line, place at back at the start
 - Press "B" again and it will now take the shortest route to the finish line
 
+### Code Structure
+**The main file, LinMazeSolverBaseCode.ino, includes the setup code for the Pololu, the proportional and derivative values, and the main loop.**
+
+**The 2 classes, MazeSolver and SolutionFollower, work together to guide the Pololu to the correct path**
+- MazeSolver has the code to follow the maze, detect junctions, turn around at U turns, and corrects mistakes made along the way.
+- SolutionFollower takes the vector of decisions from MazeSolver and uses it to go directly to the finish line without ever making a wrong turn.
+
+*The other files are default Pololu files and are required for the code to run.*
+
+
 ### Troubleshooting
 **If the Pololu is stuttering:**
 - Decrease the proportional value in the .ino
