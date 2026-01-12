@@ -46,7 +46,62 @@ void SolutionFollower::checkIfJunction() {
 }
 
 void SolutionFollower::identifyJunction() {
+ 
+  delay(500);
+  // move forward to identify other junctions
+  motors.setSpeeds(baseSpeed, baseSpeed);
+  delay(250);
+  motors.setSpeeds(0, 0);
+  lineSensors.readLineBlack(lineSensorValues);
 
+  if (lineSensorValues[0] > 950 && lineSensorValues[1] > 950 && lineSensorValues[2] > 950 && lineSensorValues[3] > 950 && lineSensorValues[4] > 950) {
+    state = FINISHED;
+    return;
+  }
+
+  //if a left is detected
+  if (lineSensorValues[0] > 750) {
+    if (lineSensorValues[2] < 750 && lineSensorValues[4] < 750){
+    state = TURN_LEFT;
+    return;
+    }
+  }
+
+  //if a right is detected
+  if (lineSensorValues[4] > 750) {
+    if (lineSensorValues[2] < 750 && lineSensorValues[0] < 750){
+    state = TURN_RIGHT;
+    return;
+    }
+  }
+
+  //is junction
+  Decision d = path[count];
+
+  if(count == totalLength){
+    state = FINISHED;
+    return;
+  }
+
+  switch(d) {
+    case LEFT : {
+      state = TURN_LEFT;
+      break;
+    }
+
+    case RIGHT : {
+      state = TURN_RIGHT;
+      break;
+    }
+
+    case FORWARD : {
+      motors.setSpeeds(baseSpeed, baseSpeed);
+      delay(100);
+      state = LINE_FOLLOWER;
+      break;
+    }
+  }
+    count++;
 }
 
 void SolutionFollower::turnLeft() {

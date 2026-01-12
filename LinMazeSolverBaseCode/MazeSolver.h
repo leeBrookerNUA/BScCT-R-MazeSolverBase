@@ -24,8 +24,6 @@ class MazeSolver {
   private:
   State state; // value of type state
 
-
-
   void followLine();
 
   void checkIfJunction();
@@ -55,7 +53,7 @@ class MazeSolver {
     Decision path[64];
 
     int count = 0; 
-    
+
     bool isFinished();
 
     // function to be called at every main loop

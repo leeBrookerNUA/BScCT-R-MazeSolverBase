@@ -7,6 +7,7 @@ class SolutionFollower {
 
   private:
   State state;
+  int count = 0;
 
   void Screen();
 
