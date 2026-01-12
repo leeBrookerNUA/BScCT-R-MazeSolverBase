@@ -1,6 +1,13 @@
 # Pololu 3pi Maze Solving
 
 ## Prerequisites
+### Hardware
+- [Pololu 3pi+ 32U4](https://www.pololu.com/product/4975)
+- Black electrical tape
+
+### Software
+- [Arduino IDE](https://www.arduino.cc/en/software/)
+
 ### Arduino IDE Setup
 **To be able to use a Pololu with the Arduino IDE you must install the corresponding board and libraries**
 - In the Arduino IDE, open the File menu (Windows/Linux) or the Arduino menu (macOS) and select "Preferences".
