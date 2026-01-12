@@ -162,6 +162,12 @@ void SolutionFollower::loop() {
 
   if (state == FINISHED) {
     motors.setSpeeds(0, 0);
+    display.clear();
+    display.gotoXY(0,0);
+    display.print(F("Solved!"));
+    display.gotoXY(0,1);
+    display.print(F(":D"));
+    delay(100);
     return;
   }
 
