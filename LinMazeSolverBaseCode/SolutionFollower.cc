@@ -130,6 +130,10 @@ void SolutionFollower::turnRight() {
   state = LINE_FOLLOWER;
 }
 
+void SolutionFollower::Screen() {
+
+}
+
 void SolutionFollower::loop() {
    // display.clear();
   display.gotoXY(0, 0);
