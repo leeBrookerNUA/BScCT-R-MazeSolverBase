@@ -1,12 +1,11 @@
 # Pololu 3pi Maze Solving
 
 ## Prerequisites
-### Hardware
-- [Pololu 3pi+ 32U4](https://www.pololu.com/product/4975)
-- Black electrical tape
-
 ### Software
 - [Arduino IDE](https://www.arduino.cc/en/software/)
+
+### Hardware
+- [Pololu 3pi+ 32U4](https://www.pololu.com/product/4975)
 
 ### Arduino IDE Setup
 **To be able to use a Pololu with the Arduino IDE you must install the corresponding board and libraries**
@@ -21,3 +20,26 @@
 [Link to Pololu drivers](https://github.com/pololu/a-star?tab=readme-ov-file*)
 
 ## Getting Started
+### Software
+- Download the maze solving code and open it in the Arduino IDE
+***Optional:*** *Modify the ***Proportional*** and ***Derivative*** variables in the ***.ino*** to change the accuracy of the Pololu*
+- Upload the code to the Pololu
+
+### Hardware
+- Place the Pololu at the start of your maze
+- Turn the Pololu on and press the "B" button to calibrate its sensors
+- Press "B" to start the Pololu when it is done calibrating and it will start to solve the maze
+- When the pololu has reached the finish line, place at back at the start
+- Press "B" again and it will now take the shortest route to the finish line
+
+### Troubleshooting
+**If the Pololu is stuttering:**
+- Decrease the proportional value in the .ino
+
+**If the Pololu is incorrectly detecting turns:**
+- Move to an area with better lighting
+- Decrease the maxSpeed and minSpeed values
+- Adjust the proportional and derivative values
+
+**If the Pololu starts spinning randomly, repeats the same mistake, or won't finish the maze:**
+- Further troubleshoot by changing the erroring state to FAKE_END in the **MazeSolver.cc** file. This will stop the Pololu and display what values it is detecting to help you figure out what the underlying issue is.
