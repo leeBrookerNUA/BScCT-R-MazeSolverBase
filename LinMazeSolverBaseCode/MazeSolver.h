@@ -55,6 +55,8 @@ class MazeSolver {
     // constructor
     MazeSolver();
 
+    bool isFinished();
+
     // function to be called at every main loop
     void loop();
 

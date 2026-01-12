@@ -243,7 +243,16 @@ char MazeSolver::pathName(Decision name) {
 
 }
 
+bool MazeSolver::isFinished(){
 
+  if(state == FINISHED){
+    return true;
+  }
+  else{
+    return false;
+  }
+
+}
 
 void MazeSolver::loop() {
   // display.clear();
