@@ -1,6 +1,7 @@
 # Pololu 3pi Maze Solving
 
-## Arduino IDE Setup
+## Prerequisites
+### Arduino IDE Setup
 **To be able to use a Pololu with the Arduino IDE you must install the corresponding board and libraries**
 - In the Arduino IDE, open the File menu (Windows/Linux) or the Arduino menu (macOS) and select "Preferences".
 - In the Preferences dialog, find the "Additional Boards Manager URLs" text box. Copy and paste the following URL into said box:
@@ -12,4 +13,4 @@
 
 [Link to Pololu drivers](https://github.com/pololu/a-star?tab=readme-ov-file*)
 
-## 
+## Getting Started
