@@ -36,7 +36,7 @@
 **The main file, LinMazeSolverBaseCode.ino, includes the setup code for the Pololu, the proportional and derivative values, and the main loop.**
 
 **The 2 classes, MazeSolver and SolutionFollower, work together to guide the Pololu to the correct path**
-- MazeSolver has the code to follow the maze, detect junctions, turn around at U turns, and corrects mistakes made along the way.
+- MazeSolver has the code to follow the maze, detect junctions, turn around at U turns, and correct mistakes made along the way.
 - SolutionFollower takes the vector of decisions from MazeSolver and uses it to go directly to the finish line without ever making a wrong turn.
 
 *The other files are default Pololu files and are required for the code to run.*
