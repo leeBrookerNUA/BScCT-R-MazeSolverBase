@@ -199,6 +199,9 @@ void loop()
 
         solutionFollower.path[i] = d;
         }
+
+        solutionFollower.totalLength = mazeSolver.count;
+        
        
       display.gotoXY(0,1);
       display.print(F("Finished"));
@@ -206,7 +209,6 @@ void loop()
       }
 
       return;
-      solutionFollower.totalLength = mazeSolver.count;
     }
 
   solutionFollower.loop();
