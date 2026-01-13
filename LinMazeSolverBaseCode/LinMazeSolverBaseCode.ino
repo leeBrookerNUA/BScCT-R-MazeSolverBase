@@ -70,6 +70,8 @@ uint16_t derivative; // coefficient of the D term * 256
 MazeSolver mazeSolver;
 SolutionFollower solutionFollower;
 
+// keep minSpeed at -maxSpeed so the Pololu can turn on the spot
+//Edit the proportional and derivative to change the accuracy of the Pololu
 void selectStandard()
 {
   maxSpeed = 100;
@@ -185,6 +187,7 @@ void setup()
   // while(buzzer.isPlaying());
 }
 
+// what the Pololu is actually doing
 void loop()
 {
 
@@ -202,7 +205,7 @@ void loop()
 
         solutionFollower.totalLength = mazeSolver.count;
         
-       
+      //press "B" to solve the maze
       display.gotoXY(0,1);
       display.print(F("Finished"));
       while(!buttonB.getSingleDebouncedPress());

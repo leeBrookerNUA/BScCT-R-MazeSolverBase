@@ -1,7 +1,7 @@
 #ifndef MAZE_H
 #define MAZE_H
 
-// enum creates a new type which can be used like any type
+// enum for "states" the Pololu can detect and be in
 enum State {
   LINE_FOLLOWER,
   JUNCTION,
@@ -12,6 +12,7 @@ enum State {
   FAKE_END
 };
 
+// enum that lets the Pololu display what it is doing
 enum Decision {
   EMPTY,
   LEFT,

@@ -31,6 +31,7 @@ void MazeSolver::followLine() {
   motors.setSpeeds(leftSpeed, rightSpeed);
 }
 
+//checks for input on the outer four sensors to see if there are left or right turns to take
 void MazeSolver::checkIfJunction() {
   lineSensors.readLineBlack(lineSensorValues);
 
@@ -48,6 +49,7 @@ void MazeSolver::checkIfJunction() {
   }
 }
 
+// edits the path vector so it displays the correct path and removes dead ends and mistakes
 void MazeSolver::addDecision(Decision d) {
 
   path[count] = d;
@@ -103,6 +105,7 @@ void MazeSolver::addDecision(Decision d) {
     count++;
 }
 
+//if the middle sensor stops detecting anything the Pololu turns around
 void MazeSolver::checkIfDeadEnd() {
   lineSensors.readLineBlack(lineSensorValues);
   if (lineSensorValues[2] < 500) {
@@ -112,7 +115,8 @@ void MazeSolver::checkIfDeadEnd() {
   }
 }
 
-
+//once the Pololu knows there is a junction, it checks to see what kind of junction it is facing
+//replace a state with FAKE_END to troubleshoot
 void MazeSolver::identifyJunction() {
 
   // display.clear();
@@ -175,7 +179,7 @@ void MazeSolver::identifyJunction() {
 bool first = true;
 
 void MazeSolver::turnLeft() {
-
+//stops the Pololu and has it move forward before continuing so it doesn't accidentally detect infinite lefts
   motors.setSpeeds(baseSpeed, baseSpeed);
   delay(250);
   motors.setSpeeds(0, 0);
@@ -189,7 +193,7 @@ void MazeSolver::turnLeft() {
 }
 
 void MazeSolver::turnRight() {
-
+//same as turn left function
   motors.setSpeeds(baseSpeed, baseSpeed);
   delay(250);
   motors.setSpeeds(0, 0);
@@ -207,6 +211,7 @@ void MazeSolver::uTurn() {
   state = LINE_FOLLOWER;
 }
 
+//prints decisions onto the screen of the Pololu
 void MazeSolver::Screen() {
   display.gotoXY(0, 0);
   for(int i = 0; i <= 7; i++){
@@ -219,6 +224,7 @@ void MazeSolver::Screen() {
   }
 }
 
+//what is output to the Pololu's display
 char MazeSolver::pathName(Decision name) {
 
   if(name == LEFT){
@@ -243,6 +249,7 @@ char MazeSolver::pathName(Decision name) {
 
 }
 
+//once the maze is complete this is set to true so the SolutionFollower can run
 bool MazeSolver::isFinished(){
 
   if(state == FINISHED){
@@ -253,6 +260,7 @@ bool MazeSolver::isFinished(){
   }
 
 }
+
 
 void MazeSolver::loop() {
   // display.clear();
@@ -290,6 +298,8 @@ void MazeSolver::loop() {
     return;
   }
 
+//a troubleshooting state to allow users to figure out where errors are happening
+//to use replace any state in identifyJunction() with FAKE_END
   if (state == FAKE_END) {
     display.clear();
     display.print("END");

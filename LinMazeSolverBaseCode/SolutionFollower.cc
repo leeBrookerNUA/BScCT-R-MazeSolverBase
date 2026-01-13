@@ -6,6 +6,14 @@ using namespace Pololu3piPlus32U4;
 #include "SolutionFollower.h"
 #include "Shared.h"
 
+/*
+
+Code is copied over from MazeSolver.cc for simplicity
+
+Troubleshoot in MazeSolver.cc if Pololu is not correctly detecting junctions
+
+*/
+
 
 void SolutionFollower::followLine() {
   // get position & error
@@ -171,6 +179,8 @@ void SolutionFollower::loop() {
     return;
   }
 
+//a troubleshooting state to allow users to figure out where errors are happening
+//if troubleshooting go to MazeSolver.cc 
   if (state == FAKE_END) {
     display.clear();
     display.print("END");
